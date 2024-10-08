@@ -1,36 +1,21 @@
-import { useQuery } from "@tanstack/react-query";
+import { useRandom } from "./hooks/useRandom";
 import "./App.css";
-import { RandomNumber } from "./components/RandomNumber";
-
-const getCrytoNumber = async (): Promise<number> => {
-  throw "No se pudo obtener el número";
-  const resp = await fetch(
-    "https://www.random.org/integers/?num=1&min=1&max=500&col=1&base=10&format=plain&rnd=new"
-  ).then((resp) => resp.json());
-
-  return Number(resp);
-};
 
 function App() {
-  const {
-    isLoading,
-    isFetching,
-    data: number,
-    error,
-    refetch,
-  } = useQuery({
-    queryKey: ["randomNumber"],
-    queryFn: getCrytoNumber,
-    // retry: false,
-    // refetchOnWindowFocus: false,
-  });
-
+  const { randomQuery } = useRandom();
   return (
     <>
-      {isFetching ? <h1>Cargando</h1> : <h1>Número: {number} </h1>}
+      {randomQuery.isFetching ? (
+        <h1>Cargando</h1>
+      ) : (
+        <h1>Número: {randomQuery.data} </h1>
+      )}
       {/* <RandomNumber /> */}
-      <div> {JSON.stringify(error)} </div>
-      <button disabled={isFetching} onClick={() => refetch()}>
+      <div> {JSON.stringify(randomQuery.error)} </div>
+      <button
+        disabled={randomQuery.isFetching}
+        onClick={() => randomQuery.refetch()}
+      >
         Nuevo número
       </button>
     </>
